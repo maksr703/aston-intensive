@@ -1,8 +1,11 @@
 package com.aston.userservice.infrastructure.kafka.producer;
 
-import com.aston.userservice.dto.UserCreatedEvent;
-import com.aston.userservice.dto.UserDeletedEvent;
+
+
+import com.aston.events.UserCreatedEvent;
+import com.aston.events.UserDeletedEvent;
 import lombok.RequiredArgsConstructor;
+import org.apache.avro.specific.SpecificRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +13,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserEventProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, SpecificRecord> kafkaTemplate;
 
     public void sendUserCreated(UserCreatedEvent event) {
-        kafkaTemplate.send("user.created", event.id().toString(), event);
+        kafkaTemplate.send(
+                "user.created",
+                event.getId(),
+                event
+        );
     }
 
     public void sendUserDeleted(UserDeletedEvent event) {
-        kafkaTemplate.send("user.deleted", event.id().toString(), event);
+        kafkaTemplate.send(
+                "user.deleted",
+                event.getId(),
+                event
+        );
     }
 }

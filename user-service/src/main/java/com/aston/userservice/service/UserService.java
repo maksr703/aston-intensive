@@ -1,5 +1,7 @@
 package com.aston.userservice.service;
 
+import com.aston.events.UserCreatedEvent;
+import com.aston.events.UserDeletedEvent;
 import com.aston.userservice.dto.*;
 import com.aston.userservice.exception.UserNotFoundException;
 import com.aston.userservice.infrastructure.kafka.producer.UserEventProducer;
@@ -53,7 +55,7 @@ public class UserService {
         User userSaved = userRepository.save(user);
 
         UserCreatedEvent event = new UserCreatedEvent(
-                userSaved.getId(),
+                userSaved.getId().toString(),
                 userSaved.getEmail(),
                 userSaved.getName()
         );
@@ -97,9 +99,8 @@ public class UserService {
         userRepository.deleteById(id);
 
         UserDeletedEvent event = new UserDeletedEvent(
-                user.getId(),
-                user.getEmail(),
-                user.getName());
+                user.getId().toString(),
+                user.getEmail());
 
         userEventProducer.sendUserDeleted(event);
     }
