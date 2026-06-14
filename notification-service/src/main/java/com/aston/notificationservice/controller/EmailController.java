@@ -2,6 +2,7 @@ package com.aston.notificationservice.controller;
 
 import com.aston.notificationservice.dto.EmailRequest;
 import com.aston.notificationservice.service.EmailService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ public class EmailController {
     private final EmailService emailService;
 
     @PostMapping
-    public void sendEmail(@RequestBody EmailRequest request) {
+    public void sendEmail(@Valid @RequestBody EmailRequest request) {
         emailService.sendEmail(
                 request.to(),
                 request.subject(),
