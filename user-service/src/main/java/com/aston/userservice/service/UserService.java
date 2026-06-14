@@ -1,9 +1,8 @@
 package com.aston.userservice.service;
 
-import com.aston.userservice.dto.CreateUserRequest;
-import com.aston.userservice.dto.UpdateUserRequest;
-import com.aston.userservice.dto.UserResponse;
+import com.aston.userservice.dto.*;
 import com.aston.userservice.exception.UserNotFoundException;
+import com.aston.userservice.infrastructure.kafka.producer.UserEventProducer;
 import com.aston.userservice.model.User;
 import com.aston.userservice.repository.UserRepository;
 import com.aston.userservice.util.UserMapper;
@@ -18,6 +17,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserEventProducer userEventProducer;
 
     public UserResponse getUserById(UUID id) {
 
@@ -52,6 +52,14 @@ public class UserService {
 
         User userSaved = userRepository.save(user);
 
+        UserCreatedEvent event = new UserCreatedEvent(
+                userSaved.getId(),
+                userSaved.getEmail(),
+                userSaved.getName()
+        );
+
+        userEventProducer.sendUserCreated(event);
+
         return UserMapper.toResponse(userSaved);
     }
 
@@ -82,10 +90,17 @@ public class UserService {
 
     public void delete(UUID id) {
 
-        if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException(id);
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new UserNotFoundException(id));
 
         userRepository.deleteById(id);
+
+        UserDeletedEvent event = new UserDeletedEvent(
+                user.getId(),
+                user.getEmail(),
+                user.getName());
+
+        userEventProducer.sendUserDeleted(event);
     }
 }
