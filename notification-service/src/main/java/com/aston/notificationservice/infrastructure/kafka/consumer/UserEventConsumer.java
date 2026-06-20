@@ -14,6 +14,11 @@ public class UserEventConsumer {
 
     private final EmailService emailService;
 
+    private final String WELCOME = "Welcome";
+    private final String ACC_CREATED = "Ваш аккаунт создан";
+    private final String GOODBYE = "Goodbye";
+    private final String ACC_DELETED = "Аккаунт удален";
+
     @KafkaListener(topics = "user.created", groupId = "notification-group")
     public void handleUserCreated(SpecificRecord event) {
 
@@ -21,8 +26,8 @@ public class UserEventConsumer {
 
         emailService.sendEmail(
                 user.getEmail(),
-                "Welcome",
-                "Ваш аккаунт создан"
+                WELCOME,
+                ACC_CREATED
         );
     }
 
@@ -33,8 +38,8 @@ public class UserEventConsumer {
 
         emailService.sendEmail(
                 user.getEmail(),
-                "Goodbye",
-                "Аккаунт удалён"
+                GOODBYE,
+                ACC_DELETED
         );
     }
 }
