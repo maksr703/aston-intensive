@@ -2,6 +2,12 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.15'
     id 'io.spring.dependency-management' version '1.1.7'
+    id "com.github.davidmc24.gradle.plugin.avro" version "1.9.1"
+}
+
+avro {
+    createSetters = true
+    fieldVisibility = "PRIVATE"
 }
 
 group = 'com.aston'
@@ -16,12 +22,20 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url "https://packages.confluent.io/maven/" }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.apache.avro:avro:1.11.3'
+    implementation 'io.confluent:kafka-avro-serializer:7.6.0'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:kafka'
+    testImplementation 'org.testcontainers:postgresql'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
@@ -35,4 +49,12 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "build/generated-main-avro-java"
+        }
+    }
 }
