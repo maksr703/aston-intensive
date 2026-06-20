@@ -18,6 +18,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final String USER_EXISTS = "User with email already exists";
+
     private final UserRepository userRepository;
     private final UserEventProducer userEventProducer;
 
@@ -41,9 +43,7 @@ public class UserService {
     public UserResponse create(CreateUserRequest request) {
 
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException(
-                    "User with email already exists"
-            );
+            throw new IllegalArgumentException(USER_EXISTS);
         }
 
         User user = new User();
