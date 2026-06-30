@@ -4,6 +4,9 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id "com.github.davidmc24.gradle.plugin.avro" version "1.9.1"
 }
+ext {
+    springCloudVersion = "2025.0.3"
+}
 
 avro {
     createSetters = true
@@ -34,6 +37,8 @@ dependencies {
     implementation 'io.confluent:kafka-avro-serializer:7.6.0'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.17'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:kafka'
@@ -58,5 +63,10 @@ sourceSets {
         java {
             srcDirs += "build/generated-main-avro-java"
         }
+    }
+}
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
     }
 }
