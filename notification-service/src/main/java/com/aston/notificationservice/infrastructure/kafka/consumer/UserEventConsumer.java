@@ -19,7 +19,10 @@ public class UserEventConsumer {
     private final String GOODBYE = "Goodbye";
     private final String ACC_DELETED = "Аккаунт удален";
 
-    @KafkaListener(topics = "user.created", groupId = "notification-group")
+    private static final String USER_CREATED_TOPIC = "user-created";
+    private static final String USER_DELETED_TOPIC = "user-deleted";
+
+    @KafkaListener(topics = USER_CREATED_TOPIC, groupId = "notification-group")
     public void handleUserCreated(SpecificRecord event) {
 
         UserCreatedEvent user = (UserCreatedEvent) event;
@@ -31,7 +34,7 @@ public class UserEventConsumer {
         );
     }
 
-    @KafkaListener(topics = "user.deleted", groupId = "notification-group")
+    @KafkaListener(topics = USER_DELETED_TOPIC, groupId = "notification-group")
     public void handleUserDeleted(SpecificRecord event) {
 
         UserDeletedEvent user = (UserDeletedEvent) event;
