@@ -60,7 +60,11 @@ public class UserService {
                 userSaved.getName()
         );
 
-        userEventProducer.sendUserCreated(event);
+        try {
+            userEventProducer.sendUserCreated(event);
+        } catch (Exception e) {
+            System.err.println("Kafka error: " + e.getMessage());
+        }
 
         return UserMapper.toResponse(userSaved);
     }
